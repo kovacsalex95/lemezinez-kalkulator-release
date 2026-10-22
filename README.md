@@ -1,7 +1,7 @@
 # lemezinez-kalkulator-release
 
-Built releases of the LemezInez fence calculator, published by hand as GitHub releases.
-The source, tests and build script live in [lemezinez-kalkulator](https://github.com/kovacsalex95/lemezinez-kalkulator).
+Built releases of the LemezInez fence calculator. jsDelivr serves them to lemezinez.hu by tag:
+`https://cdn.jsdelivr.net/gh/kovacsalex95/lemezinez-kalkulator-release@<tag>/build/kalkulator.js`.
+The source, tests and release script live in [lemezinez-kalkulator](https://github.com/kovacsalex95/lemezinez-kalkulator).
 
-To make a release, run `node scripts/build_unas.js --hide-page-title` in the source repo.
-Then attach the output from its `dist/` folder to a new release, tagged with the source commit it was built from.
+Releases are made from the source repo with `node scripts/release.js`, never by hand here. The script replaces `build/kalkulator.js`, adds a `CHANGELOG.md` entry, tags the next version and prints the script tag for the page.
