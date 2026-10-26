@@ -717,6 +717,17 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
       '<span class="lik-card-media">' + media + "</span><span>" + esc(label) + "</span></label>";
   }
 
+  // The slat named by ?termek= (the button src/shop.js adds to slat pages):
+  // its type and colour by the same name rules as the live catalogue, or
+  // null when the name is missing or not a known slat type.
+  function linkedSlat() {
+    const name = new URLSearchParams(root.location ? root.location.search : "").get("termek");
+    if (!name) return null;
+    const family = familyForName(name.trim());
+    const type = Object.keys(RULES.slatTypes).find(function (k) { return RULES.slatTypes[k].family === family; });
+    return type ? { type: type, colour: colourForName(name) } : null;
+  }
+
   // The shop stores each product's main photo under its SKU. The colour tiles
   // zoom into its middle, so the finish fills the square.
   const PHOTO_BASE = "https://lemezinez.hu/img/18169/";
@@ -741,8 +752,11 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
     }
     const dryRun = container.dataset.dryRun === "1" || !isShop();
     const preset = container.dataset.type;
+    const linked = linkedSlat();
+    // A linked colour only some live product offers waits for the live list.
+    let wantedColour = linked ? linked.colour : null;
     const state = {
-      layout: "horizontal", type: RULES.slatTypes[preset] ? preset : "c", colour: null,
+      layout: "horizontal", type: linked ? linked.type : RULES.slatTypes[preset] ? preset : "c", colour: null,
       lengthM: "", heightCm: 180, gapCm: RULES.defaultGapCm, maxPostSpacingCm: RULES.maxPostSpacingCm,
       fastener: "screw", profileQty: "", profileQtyAuto: true,
     };
@@ -839,6 +853,7 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
       const catalogue = currentCatalogue();
       const family = RULES.slatTypes[state.type].family;
       const colours = coloursFor(catalogue, state.type);
+      if (wantedColour && colours.indexOf(wantedColour) !== -1) { state.colour = wantedColour; wantedColour = null; }
       if (colours.indexOf(state.colour) === -1) state.colour = colours[0] || null;
       el("lik-colour").innerHTML = colours.map(function (c) {
         const product = findProduct(catalogue, family, c);
@@ -893,6 +908,7 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
 
     function readForm(target) {
       const checked = function (name) { const r = form.querySelector('[name="' + name + '"]:checked'); return r ? r.value : null; };
+      if (target && (target.name === "lik-type" || target.name === "lik-colour")) wantedColour = null;
       state.layout = checked("lik-layout") || state.layout;
       const newType = checked("lik-type") || state.type;
       if (newType !== state.type) { state.type = newType; fillColours(); }

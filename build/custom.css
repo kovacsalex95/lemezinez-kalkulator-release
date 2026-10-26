@@ -11,3 +11,21 @@
 #container:has(#li-kalkulator) {
   overflow: clip !important;
 }
+
+/* The calculator button shop.js adds under a slat's cart button. */
+/* #artdet__cart keeps a 30px bottom margin; this pulls the button to 12px
+   below it. */
+.lis-calc-btn {
+  margin: -18px 0 30px;
+  padding: 10px 12px;
+  line-height: 1.3;
+  border: 2px solid #e62701;
+  color: #e62701;
+  background: #fff;
+  font-weight: 700;
+}
+.lis-calc-btn:hover,
+.lis-calc-btn:focus {
+  background: #e62701;
+  color: #fff;
+}

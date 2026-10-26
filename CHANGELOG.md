@@ -1,3 +1,9 @@
+## 0.0.7 (2026-10-26)
+
+Source: `d6b029b`
+
+- Add a calculator button to slat product pages
+
 ## 0.0.6 (2026-10-26)
 
 Source: `1fa30ab`
