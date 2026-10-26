@@ -1,3 +1,10 @@
+## 0.0.6 (2026-10-26)
+
+Source: `1fa30ab`
+
+- Pick the slat colour from photo tiles instead of a dropdown
+- Print a JavaScript stylesheet loader for Szkript beszúrás
+
 ## 0.0.5 (2026-10-26)
 
 Source: `267b42f`

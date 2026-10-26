@@ -647,6 +647,10 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
     ".lik-card-media{display:flex;align-items:center;justify-content:center;width:56px;height:44px;color:var(--lik-muted)}",
     ".lik-card-media img{max-width:100%;max-height:100%;object-fit:contain}",
     ".lik-card:has(input:checked) .lik-card-media{color:var(--lik-accent)}",
+    ".lik-swatches{grid-template-columns:repeat(auto-fill,minmax(96px,1fr))}",
+    ".lik-swatch{padding:8px 8px 10px}",
+    ".lik-swatch .lik-card-media{width:100%;height:auto;aspect-ratio:1;border-radius:6px;overflow:hidden;background:var(--lik-soft)}",
+    ".lik-swatch .lik-card-media img{width:100%;height:100%;max-width:none;max-height:none;object-fit:cover;transform:scale(4.5)}",
     ".lik-check{display:flex;align-items:center;gap:8px}",
     ".lik-hint{font-size:.85em;color:var(--lik-muted)}",
     ".lik [hidden]{display:none!important}",
@@ -713,6 +717,19 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
       '<span class="lik-card-media">' + media + "</span><span>" + esc(label) + "</span></label>";
   }
 
+  // The shop stores each product's main photo under its SKU. The colour tiles
+  // zoom into its middle, so the finish fills the square.
+  const PHOTO_BASE = "https://lemezinez.hu/img/18169/";
+  function photoFor(product) {
+    return product && product.sku ? PHOTO_BASE + product.sku + "/280x280,r/" + product.sku + ".jpg" : null;
+  }
+  function colourCard(colour, product, checked) {
+    const photo = photoFor(product);
+    return '<label class="lik-card lik-swatch"><input type="radio" name="lik-colour" value="' + colour + '"' + (checked ? " checked" : "") + ">" +
+      '<span class="lik-card-media">' + (photo ? '<img src="' + esc(photo) + '" alt="" loading="lazy">' : "") + "</span>" +
+      "<span>" + esc(COLOUR_LABELS[colour] || colour) + "</span></label>";
+  }
+
   function mount(container) {
     if (container.dataset.likMounted) return;
     container.dataset.likMounted = "1";
@@ -755,7 +772,7 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
       '<fieldset class="lik-sec"><legend class="lik-sec-title"><span class="lik-sec-num">1</span>Stílus és elrendezés</legend><div class="lik-grid">' +
       '<div class="lik-field lik-wide"><span class="lik-legend" id="lik-l-layout">Elrendezés</span><div class="lik-cards" role="radiogroup" aria-labelledby="lik-l-layout">' + layoutCards + "</div></div>" +
       '<div class="lik-field lik-wide"><span class="lik-legend" id="lik-l-type">Léc típusa</span><div class="lik-cards" role="radiogroup" aria-labelledby="lik-l-type">' + typeCards + "</div></div>" +
-      '<div class="lik-field"><label for="lik-colour">Szín</label><select id="lik-colour"></select></div>' +
+      '<div class="lik-field lik-wide"><span class="lik-legend" id="lik-l-colour">Szín</span><div class="lik-cards lik-swatches" id="lik-colour" role="radiogroup" aria-labelledby="lik-l-colour"></div></div>' +
       "</div></fieldset>" +
       '<fieldset class="lik-sec"><legend class="lik-sec-title"><span class="lik-sec-num">2</span>Méretek</legend><div class="lik-grid">' +
       '<div class="lik-field"><label for="lik-length">Kerítés hossza (m)</label><input id="lik-length" type="number" inputmode="decimal" min="0.3" max="500" step="0.1" placeholder="pl. 18"></div>' +
@@ -819,10 +836,15 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
     }
 
     function fillColours() {
-      const colours = coloursFor(currentCatalogue(), state.type);
+      const catalogue = currentCatalogue();
+      const family = RULES.slatTypes[state.type].family;
+      const colours = coloursFor(catalogue, state.type);
       if (colours.indexOf(state.colour) === -1) state.colour = colours[0] || null;
       el("lik-colour").innerHTML = colours.map(function (c) {
-        return '<option value="' + c + '"' + (c === state.colour ? " selected" : "") + ">" + esc(COLOUR_LABELS[c] || c) + "</option>";
+        const product = findProduct(catalogue, family, c);
+        // A live product without an SKU borrows the baked one's photo.
+        const pictured = product && product.sku ? product : findProduct(CATALOGUE, family, c);
+        return colourCard(c, pictured, c === state.colour);
       }).join("");
     }
 
@@ -874,7 +896,7 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
       state.layout = checked("lik-layout") || state.layout;
       const newType = checked("lik-type") || state.type;
       if (newType !== state.type) { state.type = newType; fillColours(); }
-      state.colour = el("lik-colour").value || state.colour;
+      state.colour = checked("lik-colour") || state.colour;
       state.fastener = el("lik-fastener").value;
       state.lengthM = String(el("lik-length").value).replace(",", ".");
       state.heightCm = el("lik-height").value;
