@@ -1,0 +1,13 @@
+/*
+ * Overrides of the UNAS theme, loaded on every page of lemezinez.hu from the
+ * release repo through jsDelivr (see README, "Deploying to UNAS"). Scope each
+ * rule to the page it is meant for, as this file reaches the whole shop.
+ */
+
+/* The theme's #container has overflow:hidden, which stops the calculator's
+   results column from sticking. clip hides overflow the same way but is not a
+   scroll container, so position:sticky works inside it. The theme's selector
+   chains seven :not(#id) before #container, hence !important. */
+#container:has(#li-kalkulator) {
+  overflow: clip !important;
+}

@@ -1,3 +1,9 @@
+## 0.0.5 (2026-10-26)
+
+Source: `267b42f`
+
+- Add a shop-wide custom.css that lets the results column stick
+
 ## 0.0.4 (2026-10-26)
 
 Source: `15a3d2c`
