@@ -617,48 +617,101 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
   // UI
 
   const CSS = [
-    ".lik{--lik-accent:#d9480f;--lik-line:#dde1e6;--lik-soft:#f5f6f8;--lik-ink:#1d232b;--lik-muted:#5b6672;color:var(--lik-ink);font:inherit;max-width:880px;margin:0 auto}",
+    ".lik{--lik-accent:#e62701;--lik-brand:linear-gradient(90deg,#e69a01 0%,#e62701 100%);--lik-line:#dde1e6;--lik-soft:#f5f6f8;--lik-ink:#1d232b;--lik-muted:#5b6672;color:var(--lik-ink);font:inherit;max-width:1200px;margin:0 auto;container-type:inline-size}",
     ".lik *{box-sizing:border-box}",
     ".lik h2{font-size:1.5em;margin:0 0 .3em}",
     ".lik p{margin:0 0 .8em}",
     ".lik-muted{color:var(--lik-muted);font-size:.9em}",
-    ".lik-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 18px;background:var(--lik-soft);padding:18px;border-radius:10px;margin:14px 0}",
-    ".lik-field{display:flex;flex-direction:column;gap:6px}",
-    ".lik-field.lik-wide{grid-column:1/-1}",
+    ".lik-layout{display:grid;grid-template-columns:1fr;gap:20px;align-items:start;margin-top:14px}",
+    ".lik-form{display:flex;flex-direction:column;gap:14px;margin:0}",
+    ".lik-sec{display:block;border:0;margin:0;padding:18px;background:var(--lik-soft);border-radius:10px;min-width:0}",
+    // A legend sits on the fieldset border unless it floats.
+    ".lik-sec-title{float:left;width:100%;display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.05em;padding:0;margin:0 0 14px}",
+    ".lik-sec-title+*{clear:both}",
+    ".lik-sec-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--lik-brand);color:#fff;font-size:.9em;flex:none}",
+    ".lik-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 18px}",
+    ".lik-field{display:flex;flex-direction:column;gap:6px;min-width:0}",
+    ".lik-wide{grid-column:1/-1}",
     ".lik-field>label,.lik-legend{font-weight:600;font-size:.95em}",
     ".lik input[type=number],.lik select{font:inherit;padding:9px 10px;border:1px solid var(--lik-line);border-radius:7px;background:#fff;width:100%;min-height:42px}",
     ".lik-seg{display:flex;flex-wrap:wrap;gap:8px}",
     ".lik-seg label{display:flex;align-items:center;gap:7px;border:1px solid var(--lik-line);background:#fff;border-radius:7px;padding:9px 12px;cursor:pointer;min-height:42px}",
     ".lik-seg input{accent-color:var(--lik-accent)}",
     ".lik-seg label:has(input:checked){border-color:var(--lik-accent);box-shadow:0 0 0 1px var(--lik-accent)}",
+    ".lik-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}",
+    ".lik-card{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 10px;border:1px solid var(--lik-line);border-radius:10px;background:#fff;cursor:pointer;text-align:center;font-weight:600;font-size:.95em;transition:border-color .15s,box-shadow .15s}",
+    ".lik-card input{position:absolute;opacity:0;pointer-events:none}",
+    ".lik-card:hover{border-color:#b8bec6}",
+    ".lik-card:has(input:checked){border-color:var(--lik-accent);box-shadow:0 0 0 2px var(--lik-accent)}",
+    ".lik-card:has(input:focus-visible){outline:2px solid var(--lik-ink);outline-offset:2px}",
+    ".lik-card-media{display:flex;align-items:center;justify-content:center;width:56px;height:44px;color:var(--lik-muted)}",
+    ".lik-card-media img{max-width:100%;max-height:100%;object-fit:contain}",
+    ".lik-card:has(input:checked) .lik-card-media{color:var(--lik-accent)}",
     ".lik-check{display:flex;align-items:center;gap:8px}",
     ".lik-hint{font-size:.85em;color:var(--lik-muted)}",
-    ".lik-adv{grid-column:1/-1;border-top:1px solid var(--lik-line);padding-top:12px}",
-    ".lik-adv-title{font-weight:600;margin:0}",
-    ".lik-adv-body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 18px;margin-top:12px}",
-    ".lik-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}",
-    ".lik-row select{flex:1 1 180px;width:auto}",
-    ".lik input.lik-short{width:7em;max-width:100%}",
     ".lik [hidden]{display:none!important}",
-    ".lik-result{margin-top:10px}",
-    ".lik-table{width:100%;border-collapse:collapse;font-size:.95em}",
-    ".lik-table th,.lik-table td{padding:9px 8px;border-bottom:1px solid var(--lik-line);text-align:left;vertical-align:top}",
+    ".lik-side{min-width:0}",
+    ".lik-result{background:#fff;border:1px solid var(--lik-line);border-radius:10px;padding:16px}",
+    ".lik-result-title{font-weight:700;font-size:1.05em;margin:0 0 10px}",
+    ".lik-table{width:100%;border-collapse:collapse;font-size:.92em}",
+    ".lik-table th,.lik-table td{padding:8px 6px;border-bottom:1px solid var(--lik-line);text-align:left;vertical-align:top}",
     ".lik-table th{background:var(--lik-soft);font-weight:600}",
-    ".lik-num{text-align:right!important;white-space:nowrap}",
+    ".lik-table tbody tr:nth-child(even) td{background:#fafbfc}",
+    ".lik-num{text-align:right!important;white-space:nowrap;font-variant-numeric:tabular-nums}",
     ".lik-table a{color:inherit}",
     ".lik-total td{font-weight:700;font-size:1.1em;border-bottom:none}",
-    ".lik-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0}",
-    ".lik-info div{background:var(--lik-soft);border-radius:8px;padding:9px 11px}",
-    ".lik-info b{display:block;font-size:1.15em}",
+    ".lik-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:0 0 12px}",
+    ".lik-info>div{display:flex;gap:9px;align-items:flex-start;background:var(--lik-soft);border-radius:8px;padding:9px 11px;font-size:.9em}",
+    ".lik-info-icon{flex:none;width:22px;height:22px;color:#9aa3ad;margin-top:1px}",
+    ".lik-info b{display:block;font-size:1.12em}",
     ".lik-note{border-left:4px solid #b7791f;background:#fff8e1;padding:9px 12px;border-radius:6px;margin:10px 0}",
     ".lik-error{border-left:4px solid #c92a2a;background:#fff0f0;padding:9px 12px;border-radius:6px;margin:10px 0}",
     ".lik-ok{border-left:4px solid #2b8a3e;background:#ebfbee;padding:9px 12px;border-radius:6px;margin:10px 0}",
     ".lik-actions{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 8px}",
-    ".lik-btn{font:inherit;font-weight:600;border-radius:8px;padding:12px 18px;cursor:pointer;border:1px solid var(--lik-ink);background:#fff;color:var(--lik-ink);text-decoration:none;display:inline-flex;align-items:center;min-height:46px}",
-    ".lik-btn-primary{background:var(--lik-ink);color:#fff}",
+    ".lik-btn{font:inherit;font-weight:600;border-radius:8px;padding:12px 18px;cursor:pointer;border:1px solid var(--lik-ink);background:#fff;color:var(--lik-ink);text-decoration:none;display:inline-flex;align-items:center;justify-content:center;min-height:46px}",
+    ".lik-btn-primary{background:var(--lik-brand);border-color:transparent;color:#fff;font-weight:700;text-transform:uppercase;letter-spacing:.02em;flex:1 1 100%}",
+    ".lik-btn-primary:hover{filter:brightness(1.06)}",
     ".lik-btn[disabled]{opacity:.55;cursor:wait}",
-    "@media (max-width:640px){.lik-form,.lik-adv-body{grid-template-columns:1fr;padding:14px}.lik-adv-body{padding:0}.lik-table .lik-hide-sm{display:none}}",
+    // Columns follow the widget's own width, not the window's: the shop's
+    // content box is much narrower than the screen.
+    "@container (min-width:900px){.lik-layout{grid-template-columns:minmax(0,1.7fr) minmax(340px,1fr)}.lik-side{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto}}",
+    "@container (max-width:560px){.lik-grid{grid-template-columns:1fr}.lik-sec{padding:14px}.lik-table .lik-hide-sm{display:none}}",
   ].join(NL);
+
+  // Line icons for the option cards and summary boxes. A layout or slat type
+  // with an image URL (LAYOUTS[i].image, RULES.slatTypes[k].image) shows that
+  // picture instead of its icon.
+  const SVG_OPEN = '<svg viewBox="0 0 48 36" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">';
+  const ICONS = {
+    horizontal: '<path d="M6 8h36M6 18h36M6 28h36"/><path d="M4 4v28M44 4v28" stroke-width="1.5"/>',
+    vertical: '<path d="M10 6v24M18 6v24M26 6v24M34 6v24"/><path d="M4 12h40M4 24h40" stroke-width="1.5"/>',
+    c: '<path d="M8 12v12h32V12"/><path d="M8 12h5M40 12h-5"/>',
+    ives: '<path d="M8 24c4-12 28-12 32 0"/><path d="M8 24h32" stroke-width="1.5"/>',
+    rusztikus: '<path d="M8 22c4-6 8-6 12 0s8 6 12 0 6-4 8-2"/><path d="M8 26h32" stroke-width="1.5"/>',
+    budo: '<rect x="8" y="12" width="32" height="12" rx="2"/>',
+    slats: '<path d="M6 10h36M6 18h36M6 26h36"/>',
+    posts: '<path d="M10 6v26M24 6v26M38 6v26"/><path d="M6 32h36" stroke-width="1.5"/>',
+    rows: '<path d="M8 8h32M8 16h32M8 24h32"/><path d="M4 8v0M4 16v0M4 24v0"/>',
+    points: '<path d="M6 18h36"/><circle cx="10" cy="18" r="3"/><circle cx="38" cy="18" r="3"/><circle cx="24" cy="18" r="3"/>',
+    height: '<path d="M24 4v28M18 9l6-5 6 5M18 27l6 5 6-5"/>',
+    rails: '<path d="M6 12h36M6 24h36"/><path d="M12 6v24M36 6v24" stroke-width="1.5"/>',
+    length: '<path d="M4 18h40M9 12l-5 6 5 6M39 12l5 6-5 6"/>',
+  };
+  function icon(name) { return SVG_OPEN + (ICONS[name] || "") + "</svg>"; }
+  const FACT_ICONS = {
+    "Lécek": "slats", "Oszlopok": "posts", "Sorok mezőnként": "rows", "Rögzítési pontok": "points",
+    "Valós magasság": "height", "Tartógerenda": "rails", "Lefedett hossz": "length",
+  };
+  const LAYOUTS = [
+    { value: "horizontal", label: "Vízszintes lécek", image: null },
+    { value: "vertical", label: "Függőleges lécek", image: null },
+  ];
+
+  function card(name, value, label, iconName, image) {
+    const media = image ? '<img src="' + esc(image) + '" alt="">' : icon(iconName);
+    return '<label class="lik-card"><input type="radio" name="' + name + '" value="' + value + '">' +
+      '<span class="lik-card-media">' + media + "</span><span>" + esc(label) + "</span></label>";
+  }
 
   function mount(container) {
     if (container.dataset.likMounted) return;
@@ -679,8 +732,9 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
     Object.keys(RULES.defaults).forEach(function (k) { state[k] = RULES.defaults[k]; });
     let last = null;
 
-    const typeOptions = Object.keys(RULES.slatTypes).map(function (k) {
-      return '<label><input type="radio" name="lik-type" value="' + k + '"> ' + esc(RULES.slatTypes[k].label) + "</label>";
+    const layoutCards = LAYOUTS.map(function (l) { return card("lik-layout", l.value, l.label, l.value, l.image); }).join("");
+    const typeCards = Object.keys(RULES.slatTypes).map(function (k) {
+      return card("lik-type", k, RULES.slatTypes[k].label, k, RULES.slatTypes[k].image);
     }).join("");
     const gapOptions = RULES.gapPresets.map(function (p, i) {
       return '<label><input type="radio" name="lik-gappreset" value="' + i + '"> ' + esc(p.label) + "</label>";
@@ -696,34 +750,37 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
       '<div class="lik">' +
       "<h2>Kerítéskalkulátor</h2>" +
       "<p>Adja meg a kerítés méreteit, és kiszámoljuk, mennyi lécre és kiegészítőre lesz szüksége. A teljes listát egy gombnyomással a kosárba teheti.</p>" +
+      '<div class="lik-layout">' +
       '<form class="lik-form" novalidate>' +
-      '<div class="lik-field lik-wide"><span class="lik-legend" id="lik-l-layout">Elrendezés</span><div class="lik-seg" role="radiogroup" aria-labelledby="lik-l-layout">' +
-      '<label><input type="radio" name="lik-layout" value="horizontal"> Vízszintes lécek</label>' +
-      '<label><input type="radio" name="lik-layout" value="vertical"> Függőleges lécek</label></div></div>' +
-      '<div class="lik-field lik-wide"><span class="lik-legend" id="lik-l-type">Léc típusa</span><div class="lik-seg" role="radiogroup" aria-labelledby="lik-l-type">' + typeOptions + "</div></div>" +
+      '<fieldset class="lik-sec"><legend class="lik-sec-title"><span class="lik-sec-num">1</span>Stílus és elrendezés</legend><div class="lik-grid">' +
+      '<div class="lik-field lik-wide"><span class="lik-legend" id="lik-l-layout">Elrendezés</span><div class="lik-cards" role="radiogroup" aria-labelledby="lik-l-layout">' + layoutCards + "</div></div>" +
+      '<div class="lik-field lik-wide"><span class="lik-legend" id="lik-l-type">Léc típusa</span><div class="lik-cards" role="radiogroup" aria-labelledby="lik-l-type">' + typeCards + "</div></div>" +
       '<div class="lik-field"><label for="lik-colour">Szín</label><select id="lik-colour"></select></div>' +
-      '<div class="lik-field"><label for="lik-fastener">Kötőelem</label><select id="lik-fastener"><option value="screw">Önfúró csavar</option><option value="rivet">Popszegecs</option></select></div>' +
+      "</div></fieldset>" +
+      '<fieldset class="lik-sec"><legend class="lik-sec-title"><span class="lik-sec-num">2</span>Méretek</legend><div class="lik-grid">' +
       '<div class="lik-field"><label for="lik-length">Kerítés hossza (m)</label><input id="lik-length" type="number" inputmode="decimal" min="0.3" max="500" step="0.1" placeholder="pl. 18"></div>' +
       '<div class="lik-field"><label for="lik-height">Kerítés magassága (cm)</label><input id="lik-height" type="number" inputmode="numeric" min="30" max="300" step="1"></div>' +
+      '<div class="lik-field lik-wide"><span class="lik-legend" id="lik-l-gap">Hézag két léc között</span><div class="lik-seg" role="radiogroup" aria-labelledby="lik-l-gap">' + gapOptions + "</div></div>" +
+      '<div class="lik-field"><label for="lik-gap">Hézag pontosan (cm)</label><input id="lik-gap" type="number" inputmode="decimal" min="0" max="' + RULES.maxGapCm + '" step="0.5"></div>' +
       '<div class="lik-field" data-only="horizontal"><label for="lik-spacing">Oszloptávolság legfeljebb (cm)</label><input id="lik-spacing" type="number" inputmode="numeric" min="30" max="300" step="1"><span class="lik-hint">A lécek hossza az oszloptávolsággal egyezik.</span></div>' +
-      '<div class="lik-field lik-wide"><span class="lik-legend" id="lik-l-gap">Hézag két léc között</span><div class="lik-seg" role="radiogroup" aria-labelledby="lik-l-gap">' + gapOptions + "</div>" +
-      '<label class="lik-hint" for="lik-gap">Pontos érték (cm)</label><input id="lik-gap" class="lik-short" type="number" inputmode="decimal" min="0" max="' + RULES.maxGapCm + '" step="0.5"></div>' +
-      '<div class="lik-adv lik-wide"><p class="lik-adv-title" role="heading" aria-level="3">Részletes beállítások</p>' +
-      '<div class="lik-adv-body">' +
+      "</div></fieldset>" +
+      '<fieldset class="lik-sec"><legend class="lik-sec-title"><span class="lik-sec-num">3</span>Rögzítés és részletek</legend><div class="lik-grid">' +
+      '<div class="lik-field"><label for="lik-fastener">Kötőelem</label><select id="lik-fastener"><option value="screw">Önfúró csavar</option><option value="rivet">Popszegecs</option></select></div>' +
       '<div class="lik-field" data-only="horizontal"><label for="lik-supports">Köztes alátámasztás a léc mögött</label><select id="lik-supports">' + supportOptions + "</select>" +
       '<span class="lik-hint">A léc két végén mindig van rögzítés. Minden köztes alátámasztásnál még egy rögzítési pont kell.</span></div>' +
-      '<div class="lik-field" data-only="horizontal" data-needs="clip"><span class="lik-legend" id="lik-l-mode">Rögzítés módja</span><div class="lik-seg" role="radiogroup" aria-labelledby="lik-l-mode">' +
+      '<div class="lik-field lik-wide" data-only="horizontal" data-needs="clip"><span class="lik-legend" id="lik-l-mode">Rögzítés módja</span><div class="lik-seg" role="radiogroup" aria-labelledby="lik-l-mode">' +
       '<label><input type="radio" name="lik-mode" value="clip"> Klipsszel</label>' +
       '<label><input type="radio" name="lik-mode" value="direct"> Klipsz nélkül</label></div></div>' +
-      '<div class="lik-field" data-only="vertical" data-needs="cap"><span class="lik-legend" id="lik-l-caps">Lécvégek lezárása</span><div class="lik-field" role="group" aria-labelledby="lik-l-caps">' +
+      '<div class="lik-field lik-wide" data-only="vertical" data-needs="cap"><span class="lik-legend" id="lik-l-caps">Lécvégek lezárása</span><div class="lik-field" role="group" aria-labelledby="lik-l-caps">' +
       '<label class="lik-check"><input id="lik-captop" type="checkbox"> <span data-cap-word="Felső">Felső végzáró</span></label>' +
       '<label class="lik-check"><input id="lik-capbottom" type="checkbox"> <span data-cap-word="Alsó">Alsó végzáró</span></label></div></div>' +
-      '<div class="lik-field lik-wide"><label for="lik-profile">Felfogató profil</label><div class="lik-row"><select id="lik-profile">' + profileOptions + "</select>" +
-      '<span class="lik-row" data-needs="profile"><input id="lik-profileqty" class="lik-short" type="number" inputmode="numeric" min="1" max="' + RULES.maxProfileQty + '" step="1" aria-label="Profilok száma (db)"> db</span></div>' +
-      '<span class="lik-hint">A kerítés kialakításától függ, hogy kell-e profil, és ha igen, melyik. A javasolt darabszám a két szélső oszlopra szól.</span></div>' +
-      "</div></div>" +
+      '<div class="lik-field"><label for="lik-profile">Felfogató profil</label><select id="lik-profile">' + profileOptions + "</select></div>" +
+      '<div class="lik-field" data-needs="profile"><label for="lik-profileqty">Profilok száma (db)</label><input id="lik-profileqty" type="number" inputmode="numeric" min="1" max="' + RULES.maxProfileQty + '" step="1"></div>' +
+      '<span class="lik-hint lik-wide">A kerítés kialakításától függ, hogy kell-e profil, és ha igen, melyik. A javasolt darabszám a két szélső oszlopra szól.</span>' +
+      "</div></fieldset>" +
       "</form>" +
-      '<div class="lik-result" aria-live="polite"></div>' +
+      '<aside class="lik-side"><div class="lik-result" aria-live="polite"></div></aside>' +
+      "</div>" +
       "</div>";
 
     const form = container.querySelector("form");
@@ -870,7 +927,10 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
           '<td class="lik-num">' + fmtFt(l.total) + "</td></tr>";
       }).join("");
       out.innerHTML =
-        '<div class="lik-info">' + facts.map(function (f) { return "<div>" + esc(f[0]) + "<b>" + esc(f[1]) + "</b></div>"; }).join("") + "</div>" +
+        '<p class="lik-result-title">Anyaglista</p>' +
+        '<div class="lik-info">' + facts.map(function (f) {
+          return '<div><span class="lik-info-icon">' + icon(FACT_ICONS[f[0]]) + "</span><span>" + esc(f[0]) + "<b>" + esc(f[1]) + "</b></span></div>";
+        }).join("") + "</div>" +
         result.warnings.map(function (w) { return '<div class="lik-note">' + esc(w) + "</div>"; }).join("") +
         '<table class="lik-table"><thead><tr><th>Termék</th><th class="lik-num">Mennyiség</th><th class="lik-num lik-hide-sm">Egységár</th><th class="lik-num">Összesen</th></tr></thead><tbody>' + rows +
         '</tbody><tfoot><tr class="lik-total"><td colspan="2">Összesen (bruttó, szállítás nélkül)</td><td class="lik-num lik-hide-sm"></td><td class="lik-num">' + fmtFt(result.total) + "</td></tr></tfoot></table>" +
