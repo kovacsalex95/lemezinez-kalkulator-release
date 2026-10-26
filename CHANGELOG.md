@@ -1,3 +1,11 @@
+## 0.0.11 (2026-10-26)
+
+Source: `f6c566c`
+
+- Restyle the footer contact block: left-aligned, logo first, row icons
+- Tighten the footer contact block and turn its text black
+- Restyle the footer contact block
+
 ## 0.0.10 (2026-10-26)
 
 Source: `bc879fc`
