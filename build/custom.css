@@ -30,6 +30,13 @@
   color: #fff;
 }
 
+/* The footer's contact block draws its dividers as a row of box-drawing
+   characters, which cannot wrap. On a phone they ran past the grey panel and
+   made the page scroll sideways. */
+.footer_v2_menu_1 {
+  overflow: hidden;
+}
+
 /* The length field and slider shop.js puts in place of the length dropdown. */
 .lis-len-label {
   display: block;

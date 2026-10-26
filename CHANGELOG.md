@@ -1,3 +1,9 @@
+## 0.0.9 (2026-10-26)
+
+Source: `cd3d19c`
+
+- Apply the owner's answers: optional end caps, long-slat warning
+
 ## 0.0.8 (2026-10-26)
 
 Source: `e958baa`

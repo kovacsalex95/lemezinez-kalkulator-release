@@ -41,7 +41,7 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
       { label: "5 cm-től", gapCm: 5, min: 5 },
     ],
     maxGapCm: 30,
-    maxPostSpacingCm: 200,           // rule 3
+    maxPostSpacingCm: 200,           // rule 3: the default; the owner allows up to 300 (the longest slat)
     railsUpToHeightCm: { 150: 2 },   // rule 6: up to 150 cm 2 rails ...
     railsAbove: 3,                   // ... above that 3
     horizontal: {
@@ -51,7 +51,8 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
       maxMiddleSupports: 4,
       fixingsPerClip: 1,             // rule 8
       fixingsPerPointNoClip: 1,      // rule 9: one screw per fixing point
-      capsPerSlat: 2,                // rule 14
+      // Owner: above 200 cm a slat fixed only at its ends needs support behind.
+      maxUnsupportedSlatCm: 200,
       edgeCaps: false,               // rule 16
     },
     vertical: {
@@ -59,22 +60,26 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
       clipsPerSlatPerRail: 0,        // rule 11 (unconfirmed)
       edgeCaps: true,                // rule 15; top/bottom are customer options
     },
-    // Owner: every profile is a mounting profile and depends on the fence, so
-    // none is added unless the customer picks one. The quantity suggestion is
-    // the old rule 17: per started pieceLengthCm of height, on the two end posts.
+    // Owner: the L- and Z-profile work like the U-profile, so the customer
+    // optionally picks one of the three. The quantity suggestion is rule 17:
+    // per started pieceLengthCm of height, on the two end posts.
     profiles: { u: "profile_u", l: "profile_l", z: "profile_z" },
     profileLabels: { u: "U-profil", l: "L-profil", z: "Z-profil" },
     profilePieceLengthCm: 200,
     maxProfileQty: 500,
     // Advanced-setting defaults, used by calculate() and the form alike.
-    defaults: { middleSupports: 0, fixingMode: "clip", capTop: true, capBottom: true, profile: "none" },
-    sparePercent: 5,                 // rule 13
-    // rules 20-22: slat colour -> fastener colour
+    // caps: end caps (Íves upright: edge guards) per slat, the customer's
+    // choice of 0, 1 or 2 (owner; rule 14's 2 is the default). For Íves, 1 is
+    // the top edge guard only.
+    defaults: { middleSupports: 0, fixingMode: "clip", caps: 2, profile: "none" },
+    maxCapsPerSlat: 2,
+    sparePercent: 5,                 // rule 13, confirmed
+    // rules 20-22, confirmed: slat colour -> fastener colour
     fastenerColour: {
       antracit_matt: "antracit_matt", antracit_fenyes: "antracit_matt", antracit_faminta: "antracit_matt",
       dio: "csokibarna", aranytolgy: "barna",
     },
-    // rule 23: slat colour -> profile colour when the exact one does not exist
+    // rule 23, confirmed: slat colour -> profile colour when the exact one does not exist
     profileColour: { antracit_faminta: "antracit_matt" },
     // Íves edge caps are one product with a colour option (exact UNAS values).
     edgeCapVariant: {
@@ -160,7 +165,7 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
   //          advanced settings, all optional (defaults in rules.defaults):
   //          middleSupports: 0..maxMiddleSupports      (horizontal: supports behind a slat)
   //          fixingMode: "clip" | "direct"             (horizontal clip types; direct = no clips)
-  //          capTop, capBottom: boolean                (vertical caps / Íves edge guards)
+  //          caps: 0..maxCapsPerSlat                   (end caps / Íves upright edge guards per slat)
   //          profile: "none" | "u" | "l" | "z", profileQty: whole number }
   // Whole numbers may come as strings, as form fields send them.
   // returns { ok, errors[], warnings[], lines[], info{}, total }
@@ -195,9 +200,11 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
     }
     const fixingMode = setting("fixingMode");
     if (fixingMode !== "clip" && fixingMode !== "direct") errors.push("Ismeretlen rögzítési mód.");
-    const capTop = setting("capTop");
-    const capBottom = setting("capBottom");
-    if (typeof capTop !== "boolean" || typeof capBottom !== "boolean") errors.push("Érvénytelen végzáró-beállítás.");
+    // A number or a digit string, as the form sends it. Number() alone would
+    // turn true into 1 and false or " " into 0.
+    const rawCaps = setting("caps");
+    const caps = typeof rawCaps === "number" || (typeof rawCaps === "string" && /^[0-9]+$/.test(rawCaps)) ? Number(rawCaps) : NaN;
+    if (!(Number.isInteger(caps) && caps >= 0 && caps <= rules.maxCapsPerSlat)) errors.push("Érvénytelen végzáró-beállítás.");
     const profileKey = setting("profile") !== "none" ? setting("profile") : null;
     if (profileKey && !Object.prototype.hasOwnProperty.call(rules.profiles, profileKey)) errors.push("Ismeretlen profiltípus.");
     const profileQty = Number(input.profileQty);
@@ -249,6 +256,10 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
       info.postSpacingCm = Math.round(spacing * 10) / 10;
       info.rows = rows;
       info.actualHeightCm = Math.round((rows * type.widthCm + (rows - 1) * gapCm) * 10) / 10;
+      if (slatLengthCm > rules.horizontal.maxUnsupportedSlatCm && middleSupports === 0) {
+        warnings.push("A lécek " + slatLengthCm + " cm hosszúak. " + rules.horizontal.maxUnsupportedSlatCm +
+          " cm fölött a léc mögé köztes alátámasztás kell. Kérjük, adja meg a „Köztes alátámasztás a léc mögött” mezőben.");
+      }
       if (heightCm - info.actualHeightCm >= pitch / 2) {
         warnings.push("A lécek " + fmtNum(info.actualHeightCm) + " cm magasságot adnak ki. A hézag kis módosításával közelebb kerülhet a kívánt " + heightCm + " cm-hez.");
       }
@@ -298,14 +309,12 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
     if (fastener) add(fastener, withSpare(fixings, rules), { role: "fixing" });
     else warnings.push("Ehhez a színhez nincs színazonos " + (fastenerFamily === "rivet" ? "popszegecs" : "csavar") + ", ezért a listában nem szerepel.");
 
-    // Vertical: one cap per end, and the owner says some leave the bottom off.
-    const capsPerSlat = vertical ? Number(capTop) + Number(capBottom) : layoutRules.capsPerSlat;
-    if (type.cap && capsPerSlat) {
-      add(findProduct(catalogue, type.cap), withSpare(slatCount * capsPerSlat, rules), { role: "cap" });
+    if (type.cap && caps) {
+      add(findProduct(catalogue, type.cap), withSpare(slatCount * caps, rules), { role: "cap" });
     }
     if (type.edges && layoutRules.edgeCaps) {
       const variant = rules.edgeCapVariant[input.colour];
-      [["edge_top_ives", capTop], ["edge_bottom_ives", capBottom]].forEach(function (pair) {
+      [["edge_top_ives", caps >= 1], ["edge_bottom_ives", caps >= 2]].forEach(function (pair) {
         const p = pair[1] ? findProduct(catalogue, pair[0]) : null;
         if (p && variant) add(p, withSpare(slatCount, rules), { variantName: p.variantName, variantValue: variant, role: "edge" });
       });
@@ -367,12 +376,10 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
   function settingsLine(result, input) {
     const type = RULES.slatTypes[input.type];
     const parts = ["Hézag: " + fmtNum(input.gapCm) + " cm"];
+    const caps = input.caps === undefined || input.caps === null || input.caps === "" ? RULES.defaults.caps : Number(input.caps);
+    if (type.cap) parts.push(caps ? "végzáró: lécenként " + caps + " db" : "végzáró nélkül");
     if (input.layout === "vertical") {
-      if (type.cap || type.edges) {
-        const word = type.edges ? "élvédő" : "végzáró";
-        const ends = [input.capTop !== false ? "felső" : null, input.capBottom !== false ? "alsó" : null].filter(Boolean);
-        parts.push(ends.length ? word + ": " + ends.join(" és ") : word + " nélkül");
-      }
+      if (type.edges) parts.push(caps ? "élvédő: " + (caps >= 2 ? "felső és alsó" : "felső") : "élvédő nélkül");
     } else {
       parts.push("rögzítési pontok: lécenként " + result.info.supportPoints);
       if (type.clip) parts.push(input.fixingMode === "direct" ? "klipsz nélkül" : "klipsszel");
@@ -802,9 +809,9 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
       '<div class="lik-field lik-wide" data-only="horizontal" data-needs="clip"><span class="lik-legend" id="lik-l-mode">Rögzítés módja</span><div class="lik-seg" role="radiogroup" aria-labelledby="lik-l-mode">' +
       '<label><input type="radio" name="lik-mode" value="clip"> Klipsszel</label>' +
       '<label><input type="radio" name="lik-mode" value="direct"> Klipsz nélkül</label></div></div>' +
-      '<div class="lik-field lik-wide" data-only="vertical" data-needs="cap"><span class="lik-legend" id="lik-l-caps">Lécvégek lezárása</span><div class="lik-field" role="group" aria-labelledby="lik-l-caps">' +
-      '<label class="lik-check"><input id="lik-captop" type="checkbox"> <span data-cap-word="Felső">Felső végzáró</span></label>' +
-      '<label class="lik-check"><input id="lik-capbottom" type="checkbox"> <span data-cap-word="Alsó">Alsó végzáró</span></label></div></div>' +
+      '<div class="lik-field" data-needs="cap"><label for="lik-caps" data-cap-label>Végzáró lécenként</label><select id="lik-caps">' +
+      '<option value="0">Nincs</option><option value="1">1 db</option><option value="2">2 db</option></select>' +
+      '<span class="lik-hint" data-needs="edges">Íves lécnél az 1 db a felső élvédő.</span></div>' +
       '<div class="lik-field"><label for="lik-profile">Felfogató profil</label><select id="lik-profile">' + profileOptions + "</select></div>" +
       '<div class="lik-field" data-needs="profile"><label for="lik-profileqty">Profilok száma (db)</label><input id="lik-profileqty" type="number" inputmode="numeric" min="1" max="' + RULES.maxProfileQty + '" step="1"></div>' +
       '<span class="lik-hint lik-wide">A kerítés kialakításától függ, hogy kell-e profil, és ha igen, melyik. A javasolt darabszám a két szélső oszlopra szól.</span>' +
@@ -874,8 +881,7 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
       el("lik-spacing").value = state.maxPostSpacingCm;
       el("lik-supports").value = String(state.middleSupports);
       form.querySelectorAll('[name="lik-mode"]').forEach(function (r) { r.checked = r.value === state.fixingMode; });
-      el("lik-captop").checked = state.capTop;
-      el("lik-capbottom").checked = state.capBottom;
+      el("lik-caps").value = String(state.caps);
       el("lik-profile").value = state.profile;
       el("lik-profileqty").value = state.profileQty;
       applyVisibility();
@@ -886,7 +892,9 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
       const type = RULES.slatTypes[state.type];
       const show = {
         clip: Boolean(type.clip),
-        cap: Boolean(type.cap || type.edges),
+        // Íves takes edge guards only upright (rule 16).
+        cap: Boolean(type.cap || (type.edges && state.layout === "vertical")),
+        edges: Boolean(type.edges && state.layout === "vertical"),
         profile: state.profile !== "none",
       };
       form.querySelectorAll("[data-only], [data-needs]").forEach(function (n) {
@@ -896,7 +904,7 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
       });
       // Íves slats take edge guards (élvédő) where the others take end caps.
       const word = type.edges ? "élvédő" : "végzáró";
-      form.querySelectorAll("[data-cap-word]").forEach(function (n) { n.textContent = n.dataset.capWord + " " + word; });
+      form.querySelectorAll("[data-cap-label]").forEach(function (n) { n.textContent = word[0].toUpperCase() + word.slice(1) + " lécenként"; });
       const gap = Number(state.gapCm);
       const presets = RULES.gapPresets;
       form.querySelectorAll('[name="lik-gappreset"]').forEach(function (r) {
@@ -925,8 +933,7 @@ const CATALOGUE = {"fetched":"2026-10-22","source":"https://lemezinez.hu","produ
       state.maxPostSpacingCm = el("lik-spacing").value;
       state.middleSupports = el("lik-supports").value;
       state.fixingMode = checked("lik-mode") || state.fixingMode;
-      state.capTop = el("lik-captop").checked;
-      state.capBottom = el("lik-capbottom").checked;
+      state.caps = Number(el("lik-caps").value);
       // The profile quantity follows the height until the customer types one.
       const newProfile = el("lik-profile").value;
       if (target && target.id === "lik-profileqty") state.profileQtyAuto = false;
