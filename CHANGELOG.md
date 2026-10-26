@@ -1,3 +1,9 @@
+## 0.0.8 (2026-10-26)
+
+Source: `e958baa`
+
+- Replace the length dropdown with a number field and slider
+
 ## 0.0.7 (2026-10-26)
 
 Source: `d6b029b`

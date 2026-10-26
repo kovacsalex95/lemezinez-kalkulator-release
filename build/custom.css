@@ -29,3 +29,60 @@
   background: #e62701;
   color: #fff;
 }
+
+/* The length field and slider shop.js puts in place of the length dropdown. */
+.lis-len-label {
+  display: block;
+  font-size: .85em;
+  margin-bottom: 6px;
+}
+.lis-len-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lis-len-input.form-control {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.1em;
+}
+.lis-len-unit {
+  color: #5b6672;
+}
+.lis-len-step {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #dde1e6;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 1.3em;
+  line-height: 1;
+  cursor: pointer;
+}
+.lis-len-step:hover {
+  border-color: #e62701;
+  color: #e62701;
+}
+.lis-len-range {
+  display: block;
+  width: 100%;
+  margin: 12px 0 4px;
+  accent-color: #e62701;
+}
+.lis-len-unset .lis-len-range {
+  opacity: .45;
+}
+.lis-len-hint {
+  font-size: .8em;
+  color: #5b6672;
+}
+.lis-len-error .lis-len-input.form-control {
+  border-color: #e62701;
+}
+.lis-len-error .lis-len-hint {
+  color: #e62701;
+  font-weight: 700;
+}
