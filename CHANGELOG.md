@@ -1,3 +1,9 @@
+## 0.0.10 (2026-10-26)
+
+Source: `bc879fc`
+
+- Stretch the footer's grey contact box across phone screens
+
 ## 0.0.9 (2026-10-26)
 
 Source: `cd3d19c`

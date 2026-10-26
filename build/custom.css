@@ -37,6 +37,21 @@
   overflow: hidden;
 }
 
+/* Below the desktop layout the grey contact box stacks full width but sat
+   40px in from both screen edges (the footer's and its container's 20px
+   padding each). Stretch it across the screen and keep the text in place. */
+@media (max-width: 1199.98px) {
+  .footer__left {
+    flex: 0 0 calc(100% + 80px);
+    width: calc(100% + 80px);
+    max-width: none;
+    margin-left: -40px;
+    margin-right: -40px;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}
+
 /* The length field and slider shop.js puts in place of the length dropdown. */
 .lis-len-label {
   display: block;
